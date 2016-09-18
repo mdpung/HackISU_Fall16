@@ -1,5 +1,3 @@
-package com.clarifai.androidstarter;
-
 class Credentials {
     // IMPORTANT NOTE: you should replace the CLIENT_ID and CLIENT_SECRET values below
     // with your own. You can obtain these at https://developer.clarifai.com/applications -- the

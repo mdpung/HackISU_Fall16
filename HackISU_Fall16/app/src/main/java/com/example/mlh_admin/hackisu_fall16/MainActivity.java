@@ -46,6 +46,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initialize the Amazon Cognito credentials provider
+        CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+                getApplicationContext(),
+                "us-east-1:d7c9128f-af86-49ca-8d6c-ecc5ff91d5d6", // Identity Pool ID
+                Regions.US_EAST_1 // Region
+        );
+
         gridView = (GridView) findViewById(R.id.gridview);
         gridAdapter = new GridViewAdapter(this, R.layout.grid_item_layout, getData());
         gridView.setAdapter(gridAdapter);
