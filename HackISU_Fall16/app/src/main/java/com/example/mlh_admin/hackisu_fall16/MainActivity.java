@@ -8,9 +8,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Credentials;
-import android.net.Uri;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -18,13 +15,23 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.internal.Constants;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -45,13 +52,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Initialize the Amazon Cognito credentials provider
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
                 "us-east-1:d7c9128f-af86-49ca-8d6c-ecc5ff91d5d6", // Identity Pool ID
                 Regions.US_EAST_1 // Region
         );
+
+        AmazonS3 s3 = new AmazonS3Client(credentialsProvider);
+        TransferUtility transferUtility = new TransferUtility(s3, getApplicationContext());
+
+        //File file = new File("C:\\Users\\MLH-Admin\\AndroidStudioProjects\\HackISU_Fall16_git\\HackISU_Fall16\\app\\src\\main\\res\\drawable");
+        //TransferObserver observer = transferUtility.download("crossviewstorage", "image_1.png", file);
+
 
         gridView = (GridView) findViewById(R.id.gridview);
         gridAdapter = new GridViewAdapter(this, R.layout.grid_item_layout, getData());
@@ -112,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap decodedBitmap = decodeSampledBitmapFromResource(getResources(), imgs.getResourceId(i, -1), 1024, 576);
             Bitmap halfBitmap = Bitmap.createBitmap(decodedBitmap, 0, 0,
                     decodedBitmap.getWidth()/2, decodedBitmap.getHeight());
-            imageItems.add(new ImageItem(halfBitmap, "Image#" + i));
+            imageItems.add(new ImageItem(halfBitmap, null)); //"Image#" + i
         }
         return imageItems;
     }
